@@ -32,38 +32,84 @@ export function activate(context: vscode.ExtensionContext) {
           allFileUris.push(...files);
         }
 
-        // Build the snapshot text
-        let snapshot = '';
-        for (const fileUri of allFileUris) {
-          // Only process if it’s actually a file (not a folder)
-          const stat = await vscode.workspace.fs.stat(fileUri);
-          if (stat.type === vscode.FileType.File) {
-            // Determine relative path from the workspace folder
-            const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
-            const rootPath = workspaceFolder?.uri.fsPath;
-            let relativePath: string;
-
-            if (rootPath) {
-              // Make the path relative to the root
-              relativePath = path.relative(rootPath, fileUri.fsPath);
-            } else {
-              // If there's no workspace, just use the full absolute path
-              relativePath = fileUri.fsPath;
-            }
-
-            // Read the file contents
-            const fileBytes = await vscode.workspace.fs.readFile(fileUri);
-            const fileContent = new TextDecoder().decode(fileBytes);
-
-            snapshot += `File: ${relativePath}\n`;
-            snapshot += `Contents:\n${fileContent}\n`;
-            snapshot += `---\n\n`;
+        // If more than 10 files selected, ask the user if they want to proceed
+        if (allFileUris.length > 10) {
+          const choice = await vscode.window.showWarningMessage(
+            `You have selected ${allFileUris.length} files. This could take a while. Continue?`,
+            { modal: true },
+            'Yes',
+          );
+          if (choice !== 'Yes') {
+            vscode.window.showInformationMessage('Copy operation canceled by user.');
+            return;
           }
         }
 
-        // Copy the snapshot to the clipboard
-        await vscode.env.clipboard.writeText(snapshot);
+        // Run the file reading + snapshot building in a progress UI
+        let snapshot = '';
+        let canceled = false;
 
+        await vscode.window.withProgress(
+          {
+            location: vscode.ProgressLocation.Notification,
+            title: 'Copying Snapshot...',
+            cancellable: true
+          },
+          async (progress, token) => {
+            progress.report({ increment: 0, message: 'Starting...' });
+
+            // We'll increment by this amount after each file is processed
+            const incrementPerFile = 100 / allFileUris.length;
+
+            for (let i = 0; i < allFileUris.length; i++) {
+              const fileUri = allFileUris[i];
+
+              // Check if the user canceled via the progress UI
+              if (token.isCancellationRequested) {
+                canceled = true;
+                break;
+              }
+
+              const stat = await vscode.workspace.fs.stat(fileUri);
+              if (stat.type === vscode.FileType.File) {
+                // Determine relative path from the workspace folder
+                const workspaceFolder = vscode.workspace.getWorkspaceFolder(fileUri);
+                const rootPath = workspaceFolder?.uri.fsPath;
+                let relativePath: string;
+
+                if (rootPath) {
+                  // Make the path relative to the root
+                  relativePath = path.relative(rootPath, fileUri.fsPath);
+                } else {
+                  // If there's no workspace, just use the full absolute path
+                  relativePath = fileUri.fsPath;
+                }
+
+                // Update progress message
+                progress.report({
+                  increment: incrementPerFile,
+                  message: `Reading file: ${relativePath}`
+                });
+
+                // Read file contents
+                const fileBytes = await vscode.workspace.fs.readFile(fileUri);
+                const fileContent = new TextDecoder().decode(fileBytes);
+
+                snapshot += `File: ${relativePath}\n`;
+                snapshot += `Contents:\n${fileContent}\n`;
+                snapshot += `---\n\n`;
+              }
+            }
+          }
+        );
+
+        if (canceled) {
+          vscode.window.showInformationMessage('Copy operation canceled.');
+          return;
+        }
+
+        // Copy the snapshot to the clipboard if not canceled
+        await vscode.env.clipboard.writeText(snapshot);
         vscode.window.showInformationMessage('Snapshot copied to clipboard!');
       } catch (err: any) {
         vscode.window.showErrorMessage(`Failed to copy snapshot: ${err.message || err}`);

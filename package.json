@@ -5,40 +5,46 @@
     "description": "Capture file paths and contents from selected items directly to your clipboard.",
     "version": "0.0.2",
     "engines": {
-      "vscode": "^1.81.0"
+        "vscode": "^1.81.0"
     },
     "repository": {
-      "type": "git",
-      "url": "https://github.com/cankoe/ClipSnap.git"
+        "type": "git",
+        "url": "https://github.com/cankoe/ClipSnap.git"
     },
     "homepage": "https://github.com/cankoe/ClipSnap#readme",
     "bugs": {
-      "url": "https://github.com/cankoe/ClipSnap/issues"
+        "url": "https://github.com/cankoe/ClipSnap/issues"
     },
-    "categories": ["Other"],
+    "categories": [
+        "Other"
+    ],
     "activationEvents": [
-      "onCommand:extension.copySnapshot",
-      "onContextMenu:explorer"
+        "onContextMenu:explorer"
     ],
     "main": "./out/extension.js",
     "contributes": {
-      "commands": [
-        {
-          "command": "extension.copySnapshot",
-          "title": "Copy Snapshot"
+        "commands": [
+            {
+                "command": "extension.copySnapshot",
+                "title": "ClipSnap (Copy Snapshot)"
+            }
+        ],
+        "menus": {
+            "explorer/context": [
+                {
+                    "command": "extension.copySnapshot",
+                    "group": "navigation"
+                }
+            ]
         }
-      ],
-      "menus": {
-        "explorer/context": [
-          {
-            "command": "extension.copySnapshot",
-            "group": "navigation"
-          }
-        ]
-      }
     },
     "scripts": {
-      "compile": "tsc -p .",
-      "package": "vsce package"
+        "compile": "tsc -p .",
+        "package": "vsce package"
+    },
+    "devDependencies": {
+        "@types/node": "^22.10.2",
+        "@types/vscode": "^1.96.0",
+        "typescript": "^5.7.2"
     }
-  }
+}
