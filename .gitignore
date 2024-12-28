@@ -1,0 +1,25 @@
+# Node.js dependencies
+node_modules/
+
+# Build output
+out/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# VS Code Extension Packaging
+*.vsix
+
+package-lock.json

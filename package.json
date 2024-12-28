@@ -1,0 +1,35 @@
+{
+    "name": "clipsnap",
+    "displayName": "ClipSnap",
+    "description": "Capture file paths and contents from selected items directly to your clipboard.",
+    "version": "0.0.2",
+    "engines": {
+      "vscode": "^1.81.0"
+    },
+    "categories": ["Other"],
+    "activationEvents": [
+      "onCommand:extension.copySnapshot",
+      "onContextMenu:explorer"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+      "commands": [
+        {
+          "command": "extension.copySnapshot",
+          "title": "Copy Snapshot"
+        }
+      ],
+      "menus": {
+        "explorer/context": [
+          {
+            "command": "extension.copySnapshot",
+            "group": "navigation"
+          }
+        ]
+      }
+    },
+    "scripts": {
+      "compile": "tsc -p .",
+      "package": "vsce package"
+    }
+  }
