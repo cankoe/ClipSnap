@@ -5,7 +5,7 @@
     "description": "Capture file paths and contents from selected items directly to your clipboard.",
     "version": "0.0.2",
     "engines": {
-        "vscode": "^1.81.0"
+        "vscode": "^1.96.0"
     },
     "repository": {
         "type": "git",
