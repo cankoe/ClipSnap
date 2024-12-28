@@ -3,7 +3,7 @@
     "publisher": "CanKoecher",
     "displayName": "ClipSnap",
     "description": "Capture file paths and contents from selected items directly to your clipboard.",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "engines": {
         "vscode": "^1.96.0"
     },

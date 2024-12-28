@@ -50,6 +50,10 @@ There are no special settings or configurations needed. Just install and go!
 
 ## Release Notes
 
+### 0.0.3
+- Added Progress Bar.
+- Added prompt to confirm if user selected >10 files.
+
 ### 0.0.2
 - Initial public release.
 - Added folder recursion to capture all files under a selected directory.
