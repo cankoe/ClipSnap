@@ -1,10 +1,19 @@
 {
     "name": "clipsnap",
+    "publisher": "CanKoecher",
     "displayName": "ClipSnap",
     "description": "Capture file paths and contents from selected items directly to your clipboard.",
     "version": "0.0.2",
     "engines": {
       "vscode": "^1.81.0"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/cankoe/ClipSnap.git"
+    },
+    "homepage": "https://github.com/cankoe/ClipSnap#readme",
+    "bugs": {
+      "url": "https://github.com/cankoe/ClipSnap/issues"
     },
     "categories": ["Other"],
     "activationEvents": [
