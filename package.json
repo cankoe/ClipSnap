@@ -36,7 +36,23 @@
                     "group": "navigation"
                 }
             ]
-        }
+        },
+        "configuration":[
+            {
+                "type": "object",
+                "title": "ClipSnap Settings",
+                "properties": {
+                    "ClipSnap.excludeExtensions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": [".log", ".tmp", ".DS_Store"],
+                        "description": "File extensions to exclude when creating the snapshot. Use formats like '.log', '.tmp', etc."
+                  }
+                }
+            }
+        ]
     },
     "scripts": {
         "compile": "tsc -p .",

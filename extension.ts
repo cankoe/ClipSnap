@@ -25,6 +25,11 @@ export function activate(context: vscode.ExtensionContext) {
           return;
         }
 
+        // Retrieve the excluded extensions setting
+        const excludedExtensions: string[] = vscode.workspace
+        .getConfiguration('ClipSnap')
+        .get<string[]>('excludeExtensions', []);
+
         // Recursively gather all file URIs from the selection
         const allFileUris: vscode.Uri[] = [];
         for (const uri of uris) {
@@ -32,10 +37,16 @@ export function activate(context: vscode.ExtensionContext) {
           allFileUris.push(...files);
         }
 
+        // Filter files based on excluded extensions
+        const filteredFileUris = allFileUris.filter((fileUri) => {
+          const ext = path.extname(fileUri.fsPath).toLowerCase();
+          return !excludedExtensions.includes(ext);
+        });
+
         // If more than 10 files selected, ask the user if they want to proceed
-        if (allFileUris.length > 10) {
+        if (filteredFileUris.length > 10) {
           const choice = await vscode.window.showWarningMessage(
-            `You have selected ${allFileUris.length} files. This could take a while. Continue?`,
+            `You have selected ${filteredFileUris.length} files. This could take a while. Continue?`,
             { modal: true },
             'Yes',
           );
@@ -59,10 +70,10 @@ export function activate(context: vscode.ExtensionContext) {
             progress.report({ increment: 0, message: 'Starting...' });
 
             // We'll increment by this amount after each file is processed
-            const incrementPerFile = 100 / allFileUris.length;
+            const incrementPerFile = 100 / filteredFileUris.length;
 
-            for (let i = 0; i < allFileUris.length; i++) {
-              const fileUri = allFileUris[i];
+            for (let i = 0; i < filteredFileUris.length; i++) {
+              const fileUri = filteredFileUris[i];
 
               // Check if the user canceled via the progress UI
               if (token.isCancellationRequested) {
